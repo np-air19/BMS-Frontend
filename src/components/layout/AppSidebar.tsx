@@ -43,7 +43,7 @@ function NavLink({
   collapsed: boolean;
 }) {
   const pathname = usePathname();
-  const isActive = pathname === href;
+  const isActive = href === '/dashboard' ? pathname === href : pathname.startsWith(href);
 
   const link = (
     <Link
