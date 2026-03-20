@@ -1,16 +1,12 @@
 import api from '@/lib/axios';
 import type { ApiResponse, User } from '@/types';
-import type { SignInInput, VerifyOtpInput, RegisterInput } from '@/schemas';
 
 export const authApi = {
-  requestOtp: (data: SignInInput) =>
-    api.post<ApiResponse<null>>('/auth/request-otp', data),
+  sendOtp: (email: string) =>
+    api.post<ApiResponse<null>>('/auth/send-otp', { email }),
 
-  verifyOtp: (data: VerifyOtpInput) =>
-    api.post<ApiResponse<{ user: User; token: string }>>('/auth/verify-otp', data),
-
-  register: (data: RegisterInput) =>
-    api.post<ApiResponse<{ user: User }>>('/auth/register', data),
+  verifyOtp: (email: string, otp: string) =>
+    api.post<ApiResponse<{ user: User; token: string }>>('/auth/verify-otp', { email, otp }),
 
   me: () =>
     api.get<ApiResponse<User>>('/auth/me'),

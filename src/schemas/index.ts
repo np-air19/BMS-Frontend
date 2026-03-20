@@ -6,17 +6,17 @@ import { z } from 'zod';
 // ─── Auth ─────────────────────────────────────────────
 
 export const signInSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  email: z.email('Invalid email address'),
 });
 
 export const verifyOtpSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   otp: z.string().length(6, 'OTP must be 6 digits'),
 });
 
 export const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email address'),
+  email: z.email('Invalid email address'),
 });
 
 // ─── Bookmarks ────────────────────────────────────────

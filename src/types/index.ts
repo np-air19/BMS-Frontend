@@ -1,94 +1,131 @@
-// Types — All TypeScript interfaces matching backend entities
-
 // ─── Enums ────────────────────────────────────────────
 
 export type LearningStatus = 'not_started' | 'in_progress' | 'completed';
 export type Priority = 'high' | 'medium' | 'low';
+export type Theme = 'light' | 'dark' | 'system';
+export type SessionDuration = '1d' | '7d' | '30d' | 'never';
+export type DefaultReminderTime = '06:00' | '09:00' | '12:00' | '18:00' | '21:00';
 
-// ─── Core Entities ────────────────────────────────────
+// ─── User ─────────────────────────────────────────────
+
+export interface UserPreferences {
+  theme: Theme;
+  defaultReminderTime: DefaultReminderTime;
+  sessionDuration: SessionDuration;
+}
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  avatar?: string;
+  avatar?: string | null;
+  isVerified: boolean;
+  preferences: UserPreferences;
   createdAt: string;
   updatedAt: string;
 }
 
+// ─── Category ─────────────────────────────────────────
+
 export interface Category {
   id: string;
   name: string;
-  parentId?: string;
-  userId: string;
+  color: string;
+  isDefault: boolean;
+  parentId?: string | null;
+  parent?: Category | null;
   children?: Category[];
+  userId: string;
   createdAt: string;
   updatedAt: string;
 }
+
+// ─── Bookmark ─────────────────────────────────────────
 
 export interface Bookmark {
   id: string;
   title: string;
   url: string;
-  description?: string;
-  favicon?: string;
-  learningStatus: LearningStatus;
+  favicon?: string | null;
+  purpose?: string | null;
   categories?: Category[];
   userId: string;
   createdAt: string;
   updatedAt: string;
 }
 
+// ─── Note ─────────────────────────────────────────────
+
 export interface Note {
   id: string;
   title: string;
   content: string;
-  bookmarkId?: string;
+  tags?: string[];
+  bookmark?: Pick<Bookmark, 'id' | 'title' | 'url'> | null;
+  bookmarkId?: string | null;
   userId: string;
   createdAt: string;
   updatedAt: string;
 }
 
+// ─── Video ────────────────────────────────────────────
+
 export interface Video {
   id: string;
+  youtubeId: string;
+  youtubeUrl: string;
   title: string;
-  url: string;
-  thumbnailUrl?: string;
-  duration?: string;
+  customTitle?: string | null;
+  thumbnailUrl?: string | null;
+  duration?: string | null;
+  channelName?: string | null;
+  notes?: string | null;
   learningStatus: LearningStatus;
   userId: string;
   createdAt: string;
   updatedAt: string;
 }
 
+// ─── Todo ─────────────────────────────────────────────
+
 export interface Todo {
   id: string;
   title: string;
+  description?: string | null;
   isCompleted: boolean;
   priority: Priority;
-  dueDate?: string;
+  dueDate?: string | null;
   userId: string;
   createdAt: string;
   updatedAt: string;
 }
+
+// ─── Screenshot ───────────────────────────────────────
 
 export interface Screenshot {
   id: string;
   title: string;
   imageUrl: string;
-  bookmarkId?: string;
+  description?: string | null;
+  mimeType?: string | null;
+  fileSize?: number | null;
+  bookmark?: Pick<Bookmark, 'id' | 'title' | 'url'> | null;
+  bookmarkId?: string | null;
   userId: string;
   createdAt: string;
   updatedAt: string;
 }
 
+// ─── Reminder ─────────────────────────────────────────
+
 export interface Reminder {
   id: string;
-  title: string;
-  description?: string;
+  message?: string | null;
   remindAt: string;
   isCompleted: boolean;
-  bookmarkId?: string;
+  isNotified: boolean;
+  bookmark?: Pick<Bookmark, 'id' | 'title' | 'url'> | null;
+  bookmarkId?: string | null;
   userId: string;
   createdAt: string;
   updatedAt: string;
@@ -105,6 +142,16 @@ export interface DashboardStats {
   totalReminders: number;
   completedTodos: number;
   pendingReminders: number;
+  overdueReminders: number;
+  bookmarksThisWeek: number;
+  notesThisWeek: number;
+}
+
+export interface RecentActivity {
+  id: string;
+  type: 'bookmark' | 'note' | 'video';
+  title: string;
+  createdAt: string;
 }
 
 // ─── API Response Wrappers ────────────────────────────
@@ -124,67 +171,7 @@ export interface PaginatedResponse<T> {
     limit: number;
     total: number;
     totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
   };
-}
-
-// ─── DTOs ─────────────────────────────────────────────
-
-export interface CreateBookmarkDto {
-  title: string;
-  url: string;
-  description?: string;
-  learningStatus?: LearningStatus;
-  categoryIds?: string[];
-}
-
-export interface UpdateBookmarkDto extends Partial<CreateBookmarkDto> {}
-
-export interface CreateNoteDto {
-  title: string;
-  content: string;
-  bookmarkId?: string;
-}
-
-export interface UpdateNoteDto extends Partial<CreateNoteDto> {}
-
-export interface CreateVideoDto {
-  title: string;
-  url: string;
-  learningStatus?: LearningStatus;
-}
-
-export interface UpdateVideoDto extends Partial<CreateVideoDto> {}
-
-export interface CreateTodoDto {
-  title: string;
-  priority?: Priority;
-  dueDate?: string;
-}
-
-export interface UpdateTodoDto extends Partial<CreateTodoDto> {
-  isCompleted?: boolean;
-}
-
-export interface CreateReminderDto {
-  title: string;
-  description?: string;
-  remindAt: string;
-  bookmarkId?: string;
-}
-
-export interface UpdateReminderDto extends Partial<CreateReminderDto> {
-  isCompleted?: boolean;
-}
-
-export interface CreateCategoryDto {
-  name: string;
-  parentId?: string;
-}
-
-export interface UpdateCategoryDto extends Partial<CreateCategoryDto> {}
-
-export interface CreateScreenshotDto {
-  title: string;
-  bookmarkId?: string;
-  // file is handled via FormData
 }
