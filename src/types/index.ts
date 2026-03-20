@@ -48,6 +48,7 @@ export interface Bookmark {
   url: string;
   favicon?: string | null;
   purpose?: string | null;
+  priority: Priority;
   categories?: Category[];
   userId: string;
   createdAt: string;

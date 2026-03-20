@@ -58,6 +58,7 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [catOpen, setCatOpen] = useState(false);
+  const [priority, setPriority] = useState<'high' | 'medium' | 'low'>('medium');
 
   const [setReminder, setSetReminder] = useState(false);
   const [reminderDate, setReminderDate] = useState(defaultDate());
@@ -79,9 +80,11 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
     if (bookmark) {
       reset({ title: bookmark.title, url: bookmark.url, purpose: bookmark.purpose ?? '' });
       setSelectedIds(bookmark.categories?.map((c) => c.id) ?? []);
+      setPriority(bookmark.priority ?? 'medium');
     } else {
       reset({ title: '', url: '', purpose: '' });
       setSelectedIds([]);
+      setPriority('medium');
       setSetReminder(false);
       setReminderDate(defaultDate());
       setReminderTime('09:00');
@@ -101,6 +104,7 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
       title: values.title,
       url: values.url,
       purpose: values.purpose || undefined,
+      priority,
       categoryIds: selectedIds,
     };
 
@@ -169,6 +173,32 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
               className="w-full px-3 py-2 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all resize-none"
               {...register('purpose')}
             />
+          </div>
+
+          {/* Priority */}
+          <div className="space-y-1.5">
+            <Label>Priority</Label>
+            <div className="flex gap-2">
+              {(
+                [
+                  { value: 'high', label: 'High', cls: 'border-red-300 text-red-700 bg-red-50', active: 'border-red-500 bg-red-500 text-white' },
+                  { value: 'medium', label: 'Medium', cls: 'border-amber-300 text-amber-700 bg-amber-50', active: 'border-amber-500 bg-amber-500 text-white' },
+                  { value: 'low', label: 'Low', cls: 'border-emerald-300 text-emerald-700 bg-emerald-50', active: 'border-emerald-500 bg-emerald-500 text-white' },
+                ] as const
+              ).map((p) => (
+                <button
+                  key={p.value}
+                  type="button"
+                  onClick={() => setPriority(p.value)}
+                  className={cn(
+                    'flex-1 h-8 rounded-md border text-xs font-semibold transition-colors',
+                    priority === p.value ? p.active : p.cls,
+                  )}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Categories */}

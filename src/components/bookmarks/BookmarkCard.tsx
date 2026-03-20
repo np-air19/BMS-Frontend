@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useDeleteBookmark } from '@/hooks/useBookmarks';
 import type { Bookmark } from '@/types';
+import { cn } from '@/lib/utils';
 
 function extractDomain(url: string): string {
   try {
@@ -137,9 +138,20 @@ export default function BookmarkCard({ bookmark, onEdit }: Props) {
           </p>
         )}
 
-        {/* Footer: categories + date */}
         <div className="flex items-center justify-between gap-2 mt-auto pt-1">
-          <div className="flex flex-wrap gap-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-1 min-w-0">
+            {bookmark.priority && bookmark.priority !== 'medium' && (
+              <span
+                className={cn(
+                  'inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-bold border shrink-0',
+                  bookmark.priority === 'high'
+                    ? 'bg-red-50 text-red-700 border-red-200'
+                    : 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                )}
+              >
+                {bookmark.priority === 'high' ? '↑ High' : '↓ Low'}
+              </span>
+            )}
             {bookmark.categories?.slice(0, 2).map((cat) => (
               <span
                 key={cat.id}

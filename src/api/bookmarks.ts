@@ -12,6 +12,7 @@ export interface CreateBookmarkPayload {
   title: string;
   url: string;
   purpose?: string;
+  priority?: 'high' | 'medium' | 'low';
   categoryIds?: string[];
 }
 
@@ -19,6 +20,7 @@ export interface UpdateBookmarkPayload {
   title?: string;
   url?: string;
   purpose?: string;
+  priority?: 'high' | 'medium' | 'low';
   categoryIds?: string[];
 }
 
