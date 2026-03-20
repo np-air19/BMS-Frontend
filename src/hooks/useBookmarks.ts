@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import {
   bookmarksApi,
   type BookmarkParams,
@@ -17,6 +17,7 @@ export function useBookmarks(params?: BookmarkParams) {
       const res = await bookmarksApi.getAll(params);
       return res.data;
     },
+    placeholderData: keepPreviousData,
   });
 }
 

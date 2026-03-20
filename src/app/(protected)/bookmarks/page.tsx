@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Plus, Search, Bookmark as BookmarkIcon } from 'lucide-react';
+import { Plus, Search, Bookmark as BookmarkIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useBookmarks } from '@/hooks/useBookmarks';
@@ -34,7 +34,7 @@ export default function BookmarksPage() {
     }, 400);
   };
 
-  const { data, isLoading } = useBookmarks({
+  const { data, isLoading, isFetching } = useBookmarks({
     search: debouncedSearch || undefined,
     categoryId,
     page,
@@ -90,8 +90,11 @@ export default function BookmarksPage() {
           value={search}
           onChange={(e) => handleSearch(e.target.value)}
           placeholder="Search by title, URL, or purpose…"
-          className="w-full h-9 pl-9 pr-3 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all"
+          className="w-full h-9 pl-9 pr-8 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all"
         />
+        {isFetching && !isLoading && (
+          <Loader2 className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground animate-spin" />
+        )}
       </div>
 
       {/* Category filter pills */}

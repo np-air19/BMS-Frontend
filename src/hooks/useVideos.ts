@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import {
   videosApi,
   type VideoParams,
@@ -17,6 +17,7 @@ export function useVideos(params?: VideoParams) {
       const res = await videosApi.getAll(params);
       return res.data;
     },
+    placeholderData: keepPreviousData,
   });
 }
 
