@@ -6,7 +6,11 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import dynamic from 'next/dynamic';
-const TipTapEditor = dynamic(() => import('@/components/notes/TipTapEditor'), { ssr: false });
+import { Skeleton } from '@/components/ui/skeleton';
+const TipTapEditor = dynamic(() => import('@/components/notes/TipTapEditor'), {
+  ssr: false,
+  loading: () => <Skeleton className="h-80 w-full rounded-md" />,
+});
 import TagsInput from '@/components/notes/TagsInput';
 import BookmarkSelector from '@/components/notes/BookmarkSelector';
 import { useCreateNote } from '@/hooks/useNotes';

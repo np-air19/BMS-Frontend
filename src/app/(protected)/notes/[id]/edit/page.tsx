@@ -1,39 +1,31 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import dynamic from 'next/dynamic';
-const TipTapEditor = dynamic(() => import('@/components/notes/TipTapEditor'), { ssr: false });
 import TagsInput from '@/components/notes/TagsInput';
 import BookmarkSelector from '@/components/notes/BookmarkSelector';
 import { useNote, useUpdateNote } from '@/hooks/useNotes';
+import type { Note } from '@/types';
 
-export default function EditNotePage() {
+const TipTapEditor = dynamic(() => import('@/components/notes/TipTapEditor'), {
+  ssr: false,
+  loading: () => <Skeleton className="h-80 w-full rounded-md" />,
+});
+
+function NoteEditForm({ note }: { note: Note }) {
   const router = useRouter();
-  const { id } = useParams<{ id: string }>();
-  const { data: note, isLoading } = useNote(id);
   const updateMutation = useUpdateNote();
 
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
-  const [bookmarkId, setBookmarkId] = useState<string | undefined>();
+  const [title, setTitle] = useState(note.title);
+  const [content, setContent] = useState(note.content);
+  const [tags, setTags] = useState<string[]>(note.tags ?? []);
+  const [bookmarkId, setBookmarkId] = useState<string | undefined>(note.bookmarkId ?? undefined);
   const [titleError, setTitleError] = useState('');
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    if (note && !ready) {
-      setTitle(note.title);
-      setContent(note.content);
-      setTags(note.tags ?? []);
-      setBookmarkId(note.bookmarkId ?? undefined);
-      setReady(true);
-    }
-  }, [note, ready]);
 
   const handleSubmit = async () => {
     if (!title.trim()) {
@@ -42,7 +34,7 @@ export default function EditNotePage() {
     }
     setTitleError('');
     await updateMutation.mutateAsync({
-      id,
+      id: note.id,
       data: {
         title: title.trim(),
         content,
@@ -52,17 +44,6 @@ export default function EditNotePage() {
     });
     router.push('/notes');
   };
-
-  if (isLoading || !ready) {
-    return (
-      <div className="max-w-3xl mx-auto space-y-6">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-9 w-full" />
-        <Skeleton className="h-80 w-full rounded-xl" />
-        <Skeleton className="h-9 w-full" />
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -90,18 +71,13 @@ export default function EditNotePage() {
       {/* Editor */}
       <div className="space-y-1.5">
         <Label>Content</Label>
-        <TipTapEditor
-          content={content}
-          onChange={setContent}
-          placeholder="Write your note…"
-        />
+        <TipTapEditor content={content} onChange={setContent} placeholder="Write your note…" />
       </div>
 
       {/* Tags */}
       <div className="space-y-1.5">
         <Label>
-          Tags{' '}
-          <span className="font-normal text-muted-foreground">(optional)</span>
+          Tags <span className="font-normal text-muted-foreground">(optional)</span>
         </Label>
         <TagsInput tags={tags} onChange={setTags} />
       </div>
@@ -109,8 +85,7 @@ export default function EditNotePage() {
       {/* Linked Bookmark */}
       <div className="space-y-1.5">
         <Label>
-          Linked bookmark{' '}
-          <span className="font-normal text-muted-foreground">(optional)</span>
+          Linked bookmark <span className="font-normal text-muted-foreground">(optional)</span>
         </Label>
         <BookmarkSelector value={bookmarkId} onChange={setBookmarkId} />
       </div>
@@ -127,4 +102,22 @@ export default function EditNotePage() {
       </div>
     </div>
   );
+}
+
+export default function EditNotePage() {
+  const { id } = useParams<{ id: string }>();
+  const { data: note, isLoading } = useNote(id);
+
+  if (isLoading || !note) {
+    return (
+      <div className="max-w-3xl mx-auto space-y-6">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-9 w-full" />
+        <Skeleton className="h-80 w-full rounded-xl" />
+        <Skeleton className="h-9 w-full" />
+      </div>
+    );
+  }
+
+  return <NoteEditForm note={note} />;
 }
