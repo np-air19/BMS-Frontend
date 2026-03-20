@@ -49,14 +49,14 @@ function NavLink({
     <Link
       href={href}
       className={cn(
-        'flex items-center gap-3 rounded-md py-2 text-sm font-medium transition-colors',
+        'flex items-center gap-3 rounded-md py-2.5 text-[0.85rem] font-medium transition-colors',
         collapsed ? 'justify-center px-2' : 'px-3',
         isActive
           ? 'bg-sidebar-primary text-sidebar-primary-foreground'
           : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
       )}
     >
-      <Icon className="w-4 h-4 shrink-0" />
+      <Icon className="w-[1.1rem] h-[1.1rem] shrink-0" />
       {!collapsed && <span className="truncate">{label}</span>}
     </Link>
   );
