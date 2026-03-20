@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ExternalLink, Copy, Bell, Trash2, MoreHorizontal, Globe, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
+import ReminderDialog from '@/components/reminders/ReminderDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +24,6 @@ import {
 import { useDeleteBookmark } from '@/hooks/useBookmarks';
 import type { Bookmark } from '@/types';
 
-// ── Helpers ────────────────────────────────────────────────────────────────
 function extractDomain(url: string): string {
   try {
     return new URL(url).hostname.replace(/^www\./, '');
@@ -47,7 +47,6 @@ function formatDate(dateStr: string): string {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-// ── Component ──────────────────────────────────────────────────────────────
 interface Props {
   bookmark: Bookmark;
   onEdit: (bookmark: Bookmark) => void;
@@ -56,6 +55,7 @@ interface Props {
 export default function BookmarkCard({ bookmark, onEdit }: Props) {
   const [faviconError, setFaviconError] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [reminderOpen, setReminderOpen] = useState(false);
   const deleteMutation = useDeleteBookmark();
 
   const domain = extractDomain(bookmark.url);
@@ -68,9 +68,7 @@ export default function BookmarkCard({ bookmark, onEdit }: Props) {
   return (
     <>
       <div className="group relative flex flex-col gap-3 rounded-xl border bg-card p-4 hover:shadow-md hover:border-border/80 transition-all duration-200">
-        {/* Header row */}
         <div className="flex items-start gap-3">
-          {/* Favicon */}
           <div className="mt-0.5 w-8 h-8 rounded-lg border bg-muted flex items-center justify-center shrink-0 overflow-hidden">
             {bookmark.favicon && !faviconError ? (
               <img
@@ -84,7 +82,6 @@ export default function BookmarkCard({ bookmark, onEdit }: Props) {
             )}
           </div>
 
-          {/* Title + domain */}
           <div className="flex-1 min-w-0">
             <a
               href={bookmark.url}
@@ -97,7 +94,6 @@ export default function BookmarkCard({ bookmark, onEdit }: Props) {
             <p className="text-xs text-muted-foreground mt-0.5 truncate">{domain}</p>
           </div>
 
-          {/* 3-dot menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="opacity-0 group-hover:opacity-100 -mt-0.5 -mr-1 p-1.5 rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-all">
@@ -119,7 +115,7 @@ export default function BookmarkCard({ bookmark, onEdit }: Props) {
                 <Copy className="w-4 h-4 mr-2" />
                 Copy URL
               </DropdownMenuItem>
-              <DropdownMenuItem disabled className="text-muted-foreground">
+              <DropdownMenuItem onClick={() => setReminderOpen(true)}>
                 <Bell className="w-4 h-4 mr-2" />
                 Set reminder
               </DropdownMenuItem>
@@ -135,7 +131,6 @@ export default function BookmarkCard({ bookmark, onEdit }: Props) {
           </DropdownMenu>
         </div>
 
-        {/* Purpose */}
         {bookmark.purpose && (
           <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed -mt-1">
             {bookmark.purpose}
@@ -169,6 +164,12 @@ export default function BookmarkCard({ bookmark, onEdit }: Props) {
           </time>
         </div>
       </div>
+
+      <ReminderDialog
+        open={reminderOpen}
+        onClose={() => setReminderOpen(false)}
+        bookmarkId={bookmark.id}
+      />
 
       {/* Delete confirmation */}
       <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>

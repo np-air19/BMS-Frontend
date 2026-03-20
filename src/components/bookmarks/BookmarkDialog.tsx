@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Check, ChevronsUpDown, Loader2 } from 'lucide-react';
+import { Check, ChevronsUpDown, Loader2, Bell } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -18,11 +18,17 @@ import { Badge } from '@/components/ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useCategories } from '@/hooks/useCategories';
 import { useCreateBookmark, useUpdateBookmark } from '@/hooks/useBookmarks';
+import { useCreateReminder } from '@/hooks/useReminders';
 import { type CategoryTree } from '@/api/categories';
 import type { Bookmark } from '@/types';
 import { cn } from '@/lib/utils';
 
-// ── Flatten tree ───────────────────────────────────────────────────────────
+function defaultDate(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().slice(0, 10);
+}
+
 function flattenTree(nodes: CategoryTree[], depth = 0): Array<CategoryTree & { depth: number }> {
   return nodes.flatMap((node) => [
     { ...node, depth },
@@ -30,7 +36,6 @@ function flattenTree(nodes: CategoryTree[], depth = 0): Array<CategoryTree & { d
   ]);
 }
 
-// ── Schema ─────────────────────────────────────────────────────────────────
 const schema = z.object({
   title: z.string().min(1, 'Title is required').max(255),
   url: z.string().url('Please enter a valid URL'),
@@ -39,7 +44,6 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-// ── Props ──────────────────────────────────────────────────────────────────
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -54,6 +58,12 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [catOpen, setCatOpen] = useState(false);
+
+  const [setReminder, setSetReminder] = useState(false);
+  const [reminderDate, setReminderDate] = useState(defaultDate());
+  const [reminderTime, setReminderTime] = useState('09:00');
+  const [reminderMessage, setReminderMessage] = useState('');
+  const createReminderMutation = useCreateReminder();
 
   const flatCats = flattenTree(catTree as CategoryTree[]);
 
@@ -72,6 +82,10 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
     } else {
       reset({ title: '', url: '', purpose: '' });
       setSelectedIds([]);
+      setSetReminder(false);
+      setReminderDate(defaultDate());
+      setReminderTime('09:00');
+      setReminderMessage('');
     }
   }, [open, bookmark, reset]);
 
@@ -89,10 +103,18 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
       purpose: values.purpose || undefined,
       categoryIds: selectedIds,
     };
+
     if (isEdit) {
       await updateMutation.mutateAsync({ id: bookmark!.id, data: payload });
     } else {
-      await createMutation.mutateAsync(payload);
+      const res = await createMutation.mutateAsync(payload);
+      if (setReminder && reminderDate && reminderTime) {
+        await createReminderMutation.mutateAsync({
+          remindAt: new Date(`${reminderDate}T${reminderTime}`).toISOString(),
+          message: reminderMessage || undefined,
+          bookmarkId: res.data.data.id,
+        });
+      }
     }
     onClose();
   };
@@ -224,6 +246,70 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
               </div>
             )}
           </div>
+
+          {!isEdit && (
+            <div className="space-y-3 pt-1">
+              <div className="h-px bg-border" />
+
+              <button
+                type="button"
+                onClick={() => setSetReminder((v) => !v)}
+                className="flex items-center gap-2.5 w-full text-left"
+              >
+                <div
+                  className={cn(
+                    'w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors',
+                    setReminder ? 'bg-primary border-primary' : 'border-input',
+                  )}
+                >
+                  {setReminder && <Check className="w-3 h-3 text-primary-foreground" />}
+                </div>
+                <Bell className="w-3.5 h-3.5 text-muted-foreground" />
+                <span className="text-sm font-medium">Set reminder</span>
+              </button>
+
+              {setReminder && (
+                <div className="space-y-3 pl-6">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="bm-rm-date">Reminder Date</Label>
+                      <input
+                        id="bm-rm-date"
+                        type="date"
+                        value={reminderDate}
+                        onChange={(e) => setReminderDate(e.target.value)}
+                        className="w-full h-9 px-3 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="bm-rm-time">Time</Label>
+                      <input
+                        id="bm-rm-time"
+                        type="time"
+                        value={reminderTime}
+                        onChange={(e) => setReminderTime(e.target.value)}
+                        className="w-full h-9 px-3 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="bm-rm-msg">
+                      Reminder Message{' '}
+                      <span className="font-normal text-muted-foreground">(optional)</span>
+                    </Label>
+                    <textarea
+                      id="bm-rm-msg"
+                      rows={2}
+                      placeholder="Custom reminder message…"
+                      value={reminderMessage}
+                      onChange={(e) => setReminderMessage(e.target.value)}
+                      className="w-full px-3 py-2 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all resize-none"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           <DialogFooter className="pt-2">
             <Button type="button" variant="outline" onClick={onClose}>
