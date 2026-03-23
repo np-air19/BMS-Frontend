@@ -13,12 +13,15 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useCategories } from '@/hooks/useCategories';
 import { useCreateBookmark, useUpdateBookmark } from '@/hooks/useBookmarks';
 import { useCreateReminder } from '@/hooks/useReminders';
+import { useAuthStore } from '@/store/authStore';
 import { type CategoryTree } from '@/api/categories';
 import type { Bookmark } from '@/types';
 import { cn } from '@/lib/utils';
@@ -38,7 +41,7 @@ function flattenTree(nodes: CategoryTree[], depth = 0): Array<CategoryTree & { d
 
 const schema = z.object({
   title: z.string().min(1, 'Title is required').max(255),
-  url: z.string().url('Please enter a valid URL'),
+  url: z.url('Please enter a valid URL'),
   purpose: z.string().max(500).optional(),
 });
 
@@ -55,6 +58,7 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
   const createMutation = useCreateBookmark();
   const updateMutation = useUpdateBookmark();
   const { data: catTree = [] } = useCategories();
+  const defaultReminderTime = useAuthStore((s) => s.user?.preferences?.defaultReminderTime ?? '09:00');
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [catOpen, setCatOpen] = useState(false);
@@ -62,7 +66,7 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
 
   const [setReminder, setSetReminder] = useState(false);
   const [reminderDate, setReminderDate] = useState(defaultDate());
-  const [reminderTime, setReminderTime] = useState('09:00');
+  const [reminderTime, setReminderTime] = useState<string>(defaultReminderTime);
   const [reminderMessage, setReminderMessage] = useState('');
   const createReminderMutation = useCreateReminder();
 
@@ -87,7 +91,7 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
       setPriority('medium');
       setSetReminder(false);
       setReminderDate(defaultDate());
-      setReminderTime('09:00');
+      setReminderTime(defaultReminderTime);
       setReminderMessage('');
     }
   }, [open, bookmark, reset]);
@@ -125,19 +129,20 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
+      <DialogContent className="max-w-md flex flex-col max-h-[90vh]">
+        <DialogHeader className="shrink-0">
           <DialogTitle>{isEdit ? 'Edit bookmark' : 'Add bookmark'}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-1">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0">
+          <div className="overflow-y-auto flex-1 -mx-1">
+          <div className="space-y-4 py-0.5 px-1">
           {/* Title */}
           <div className="space-y-1.5">
             <Label htmlFor="bm-title">Title</Label>
-            <input
+            <Input
               id="bm-title"
               placeholder="My awesome resource"
-              className="w-full h-9 px-3 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all"
               {...register('title')}
             />
             {errors.title && (
@@ -148,11 +153,10 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
           {/* URL */}
           <div className="space-y-1.5">
             <Label htmlFor="bm-url">URL</Label>
-            <input
+            <Input
               id="bm-url"
               type="url"
               placeholder="https://example.com"
-              className="w-full h-9 px-3 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all"
               {...register('url')}
             />
             {errors.url && (
@@ -166,11 +170,11 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
               Purpose{' '}
               <span className="font-normal text-muted-foreground">(optional)</span>
             </Label>
-            <textarea
+            <Textarea
               id="bm-purpose"
               rows={2}
               placeholder="Why are you saving this?"
-              className="w-full px-3 py-2 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all resize-none"
+              className="resize-none"
               {...register('purpose')}
             />
           </div>
@@ -303,22 +307,20 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
                       <Label htmlFor="bm-rm-date">Reminder Date</Label>
-                      <input
+                      <Input
                         id="bm-rm-date"
                         type="date"
                         value={reminderDate}
                         onChange={(e) => setReminderDate(e.target.value)}
-                        className="w-full h-9 px-3 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all"
                       />
                     </div>
                     <div className="space-y-1.5">
                       <Label htmlFor="bm-rm-time">Time</Label>
-                      <input
+                      <Input
                         id="bm-rm-time"
                         type="time"
                         value={reminderTime}
                         onChange={(e) => setReminderTime(e.target.value)}
-                        className="w-full h-9 px-3 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all"
                       />
                     </div>
                   </div>
@@ -327,21 +329,23 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
                       Reminder Message{' '}
                       <span className="font-normal text-muted-foreground">(optional)</span>
                     </Label>
-                    <textarea
+                    <Textarea
                       id="bm-rm-msg"
                       rows={2}
                       placeholder="Custom reminder message…"
                       value={reminderMessage}
                       onChange={(e) => setReminderMessage(e.target.value)}
-                      className="w-full px-3 py-2 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all resize-none"
+                      className="resize-none"
                     />
                   </div>
                 </div>
               )}
             </div>
           )}
+          </div>
+          </div>
 
-          <DialogFooter className="pt-2">
+          <DialogFooter className="pt-2 shrink-0">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>

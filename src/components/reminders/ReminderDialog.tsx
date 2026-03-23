@@ -15,6 +15,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useCreateReminder, useUpdateReminder } from '@/hooks/useReminders';
+import { useAuthStore } from '@/store/authStore';
 import type { Reminder } from '@/types';
 
 // ── Schema ─────────────────────────────────────────────────────────────────
@@ -48,6 +49,7 @@ interface Props {
 
 export default function ReminderDialog({ open, onClose, reminder, bookmarkId }: Props) {
   const isEdit = !!reminder;
+  const defaultTime = useAuthStore((s) => s.user?.preferences?.defaultReminderTime ?? '09:00');
   const createMutation = useCreateReminder();
   const updateMutation = useUpdateReminder();
 
@@ -73,7 +75,7 @@ export default function ReminderDialog({ open, onClose, reminder, bookmarkId }: 
     } else {
       reset({
         date: toLocalDateString(tomorrow),
-        time: '09:00',
+        time: defaultTime,
         message: '',
       });
     }
