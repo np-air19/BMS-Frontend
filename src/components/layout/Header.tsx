@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { useUiStore } from '@/store/uiStore';
 import { useAuthStore } from '@/store/authStore';
 import { authApi } from '@/api/auth';
+import { useUpdatePreferences } from '@/hooks/useSettings';
 import { Button } from '@/components/ui/button';
 import { SearchModal } from '@/components/search/SearchModal';
 import {
@@ -29,7 +30,13 @@ export default function Header() {
   const { sidebarOpen, toggleSidebar } = useUiStore();
   const { user, logout } = useAuthStore();
   const { setTheme, theme } = useTheme();
+  const { mutate: saveTheme } = useUpdatePreferences();
   const [searchOpen, setSearchOpen] = useState(false);
+
+  const handleThemeChange = (t: 'light' | 'dark' | 'system') => {
+    setTheme(t);
+    saveTheme({ theme: t });
+  };
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -134,15 +141,15 @@ export default function Header() {
                 Theme
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent>
-                <DropdownMenuItem onClick={() => setTheme('light')}>
+                <DropdownMenuItem onClick={() => handleThemeChange('light')}>
                   <Sun className="w-4 h-4 mr-2" />
                   Light
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme('dark')}>
+                <DropdownMenuItem onClick={() => handleThemeChange('dark')}>
                   <Moon className="w-4 h-4 mr-2" />
                   Dark
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme('system')}>
+                <DropdownMenuItem onClick={() => handleThemeChange('system')}>
                   <Monitor className="w-4 h-4 mr-2" />
                   System
                 </DropdownMenuItem>

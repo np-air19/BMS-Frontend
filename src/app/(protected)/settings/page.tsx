@@ -169,11 +169,11 @@ const SESSION_OPTIONS: { value: SessionDuration; label: string; description: str
 
 function PreferencesTab() {
   const user = useAuthStore((s) => s.user);
-  const { setTheme } = useTheme();
+  const { setTheme, theme: activeTheme } = useTheme();
   const { mutate: updatePreferences, isPending } = useUpdatePreferences();
 
   const [prefs, setPrefs] = useState<UserPreferences>({
-    theme: user?.preferences?.theme ?? 'system',
+    theme: (activeTheme as Theme) ?? user?.preferences?.theme ?? 'system',
     defaultReminderTime: user?.preferences?.defaultReminderTime ?? '09:00',
     sessionDuration: user?.preferences?.sessionDuration ?? '7d',
   });
