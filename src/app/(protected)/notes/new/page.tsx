@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -53,12 +54,11 @@ export default function NewNotePage() {
       {/* Title */}
       <div className="space-y-1.5">
         <Label htmlFor="note-title">Title</Label>
-        <input
+        <Input
           id="note-title"
           value={title}
           onChange={(e) => { setTitle(e.target.value); setTitleError(''); }}
           placeholder="Note title…"
-          className="w-full h-9 px-3 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all"
         />
         {titleError && <p className="text-xs text-destructive">{titleError}</p>}
       </div>

@@ -13,7 +13,16 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useCreateVideo, useUpdateVideo } from '@/hooks/useVideos';
 import type { Video, LearningStatus } from '@/types';
 
@@ -40,11 +49,6 @@ const STATUS_OPTIONS: { value: LearningStatus; label: string }[] = [
   { value: 'completed', label: 'Completed' },
 ];
 
-const inputCls =
-  'w-full h-9 px-3 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all';
-const selectCls =
-  'w-full h-9 px-3 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all appearance-none cursor-pointer';
-
 // ── Props ──────────────────────────────────────────────────────────────────
 interface Props {
   open: boolean;
@@ -57,7 +61,6 @@ export default function VideoDialog({ open, onClose, video }: Props) {
   const createMutation = useCreateVideo();
   const updateMutation = useUpdateVideo();
 
-  // Two separate forms so schemas differ
   const createForm = useForm<CreateValues>({
     resolver: zodResolver(createSchema),
     defaultValues: { url: '', customTitle: '', notes: '', learningStatus: 'not_started' },
@@ -119,11 +122,10 @@ export default function VideoDialog({ open, onClose, video }: Props) {
           <form onSubmit={createForm.handleSubmit(onSubmitCreate)} className="space-y-4 pt-1">
             <div className="space-y-1.5">
               <Label htmlFor="vid-url">YouTube URL</Label>
-              <input
+              <Input
                 id="vid-url"
                 type="url"
                 placeholder="https://youtube.com/watch?v=..."
-                className={inputCls}
                 {...createForm.register('url')}
               />
               {createForm.formState.errors.url && (
@@ -141,27 +143,30 @@ export default function VideoDialog({ open, onClose, video }: Props) {
                 Custom title{' '}
                 <span className="font-normal text-muted-foreground">(optional)</span>
               </Label>
-              <input
+              <Input
                 id="vid-ct"
                 placeholder="Override the YouTube title"
-                className={inputCls}
                 {...createForm.register('customTitle')}
               />
             </div>
 
             <div className="space-y-1.5">
               <Label htmlFor="vid-status">Learning status</Label>
-              <select
-                id="vid-status"
-                className={selectCls}
-                {...createForm.register('learningStatus')}
+              <Select
+                value={createForm.watch('learningStatus')}
+                onValueChange={(v) => createForm.setValue('learningStatus', v as LearningStatus)}
               >
-                {STATUS_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger id="vid-status">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUS_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-1.5">
@@ -169,11 +174,11 @@ export default function VideoDialog({ open, onClose, video }: Props) {
                 Notes{' '}
                 <span className="font-normal text-muted-foreground">(optional)</span>
               </Label>
-              <textarea
+              <Textarea
                 id="vid-notes"
                 rows={3}
                 placeholder="Key takeaways, timestamps, thoughts…"
-                className="w-full px-3 py-2 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all resize-none"
+                className="resize-none"
                 {...createForm.register('notes')}
               />
             </div>
@@ -193,7 +198,6 @@ export default function VideoDialog({ open, onClose, video }: Props) {
         {/* Edit form */}
         {isEdit && (
           <form onSubmit={editForm.handleSubmit(onSubmitEdit)} className="space-y-4 pt-1">
-            {/* Show original title read-only */}
             <div className="rounded-lg bg-muted/50 px-3 py-2 text-sm">
               <p className="text-xs text-muted-foreground mb-0.5">YouTube title</p>
               <p className="font-medium line-clamp-2">{video!.title}</p>
@@ -204,27 +208,30 @@ export default function VideoDialog({ open, onClose, video }: Props) {
                 Custom title{' '}
                 <span className="font-normal text-muted-foreground">(optional)</span>
               </Label>
-              <input
+              <Input
                 id="vid-edit-ct"
                 placeholder="Override the YouTube title"
-                className={inputCls}
                 {...editForm.register('customTitle')}
               />
             </div>
 
             <div className="space-y-1.5">
               <Label htmlFor="vid-edit-status">Learning status</Label>
-              <select
-                id="vid-edit-status"
-                className={selectCls}
-                {...editForm.register('learningStatus')}
+              <Select
+                value={editForm.watch('learningStatus')}
+                onValueChange={(v) => editForm.setValue('learningStatus', v as LearningStatus)}
               >
-                {STATUS_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger id="vid-edit-status">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUS_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-1.5">
@@ -232,11 +239,11 @@ export default function VideoDialog({ open, onClose, video }: Props) {
                 Notes{' '}
                 <span className="font-normal text-muted-foreground">(optional)</span>
               </Label>
-              <textarea
+              <Textarea
                 id="vid-edit-notes"
                 rows={3}
                 placeholder="Key takeaways, timestamps, thoughts…"
-                className="w-full px-3 py-2 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all resize-none"
+                className="resize-none"
                 {...editForm.register('notes')}
               />
             </div>

@@ -10,6 +10,8 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useCreateTodo, useUpdateTodo } from '@/hooks/useTodos';
 import { cn } from '@/lib/utils';
@@ -89,12 +91,11 @@ export default function TodoDialog({ open, onClose, todo }: Props) {
           {/* Title */}
           <div className="space-y-1.5">
             <Label htmlFor="todo-title">Title</Label>
-            <input
+            <Input
               id="todo-title"
               value={title}
               onChange={(e) => { setTitle(e.target.value); setTitleError(''); }}
               placeholder="What needs to be done?"
-              className="w-full h-9 px-3 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all"
             />
             {titleError && <p className="text-xs text-destructive">{titleError}</p>}
           </div>
@@ -104,13 +105,13 @@ export default function TodoDialog({ open, onClose, todo }: Props) {
             <Label htmlFor="todo-desc">
               Description <span className="font-normal text-muted-foreground">(optional)</span>
             </Label>
-            <textarea
+            <Textarea
               id="todo-desc"
               rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Add more detail…"
-              className="w-full px-3 py-2 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all resize-none"
+              className="resize-none"
             />
           </div>
 
@@ -139,12 +140,11 @@ export default function TodoDialog({ open, onClose, todo }: Props) {
             <Label htmlFor="todo-due">
               Due date <span className="font-normal text-muted-foreground">(optional)</span>
             </Label>
-            <input
+            <Input
               id="todo-due"
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="w-full h-9 px-3 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all"
             />
           </div>
         </div>

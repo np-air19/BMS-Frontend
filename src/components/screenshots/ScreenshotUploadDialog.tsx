@@ -11,6 +11,8 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useCreateScreenshot } from '@/hooks/useScreenshots';
 import { cn } from '@/lib/utils';
@@ -120,12 +122,11 @@ export default function ScreenshotUploadDialog({ open, onClose }: Props) {
           {/* Title */}
           <div className="space-y-1.5">
             <Label htmlFor="ss-title">Title</Label>
-            <input
+            <Input
               id="ss-title"
               value={title}
               onChange={(e) => { setTitle(e.target.value); setTitleError(''); }}
               placeholder="Screenshot title…"
-              className="w-full h-9 px-3 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all"
             />
             {titleError && <p className="text-xs text-destructive">{titleError}</p>}
           </div>
@@ -135,13 +136,13 @@ export default function ScreenshotUploadDialog({ open, onClose }: Props) {
             <Label htmlFor="ss-desc">
               Description <span className="font-normal text-muted-foreground">(optional)</span>
             </Label>
-            <textarea
+            <Textarea
               id="ss-desc"
               rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="What is this screenshot of?"
-              className="w-full px-3 py-2 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all resize-none"
+              className="resize-none"
             />
           </div>
         </div>

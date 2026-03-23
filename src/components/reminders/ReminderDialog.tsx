@@ -13,6 +13,8 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useCreateReminder, useUpdateReminder } from '@/hooks/useReminders';
 import { useAuthStore } from '@/store/authStore';
@@ -112,10 +114,9 @@ export default function ReminderDialog({ open, onClose, reminder, bookmarkId }: 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label htmlFor="rm-date">Date</Label>
-              <input
+              <Input
                 id="rm-date"
                 type="date"
-                className="w-full h-9 px-3 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all"
                 {...register('date')}
               />
               {errors.date && (
@@ -124,10 +125,9 @@ export default function ReminderDialog({ open, onClose, reminder, bookmarkId }: 
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="rm-time">Time</Label>
-              <input
+              <Input
                 id="rm-time"
                 type="time"
-                className="w-full h-9 px-3 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all"
                 {...register('time')}
               />
               {errors.time && (
@@ -142,11 +142,11 @@ export default function ReminderDialog({ open, onClose, reminder, bookmarkId }: 
               Message{' '}
               <span className="font-normal text-muted-foreground">(optional)</span>
             </Label>
-            <textarea
+            <Textarea
               id="rm-msg"
               rows={3}
               placeholder="What should this remind you about?"
-              className="w-full px-3 py-2 rounded-md border bg-background text-sm outline-none focus:ring-2 focus:ring-ring transition-all resize-none"
+              className="resize-none"
               {...register('message')}
             />
           </div>
