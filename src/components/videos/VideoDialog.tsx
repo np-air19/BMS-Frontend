@@ -24,11 +24,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useCreateVideo, useUpdateVideo } from '@/hooks/useVideos';
+import { applyServerErrors } from '@/lib/formErrors';
 import type { Video, LearningStatus } from '@/types';
 
 // ── Schema ─────────────────────────────────────────────────────────────────
 const createSchema = z.object({
-  url: z.string().url('Please enter a valid YouTube URL'),
+  url: z.url('Please enter a valid YouTube URL'),
   customTitle: z.string().max(255).optional(),
   notes: z.string().optional(),
   learningStatus: z.enum(['not_started', 'in_progress', 'completed']),
@@ -71,6 +72,9 @@ export default function VideoDialog({ open, onClose, video }: Props) {
     defaultValues: { customTitle: '', notes: '', learningStatus: 'not_started' },
   });
 
+  const { setError: setCreateError } = createForm;
+  const { setError: setEditError } = editForm;
+
   const activeForm = isEdit ? editForm : createForm;
   const { formState } = activeForm;
 
@@ -89,25 +93,33 @@ export default function VideoDialog({ open, onClose, video }: Props) {
   }, [open, video]);
 
   const onSubmitCreate = async (values: CreateValues) => {
-    await createMutation.mutateAsync({
-      url: values.url,
-      customTitle: values.customTitle || undefined,
-      notes: values.notes || undefined,
-      learningStatus: values.learningStatus,
-    });
-    onClose();
-  };
-
-  const onSubmitEdit = async (values: EditValues) => {
-    await updateMutation.mutateAsync({
-      id: video!.id,
-      data: {
+    try {
+      await createMutation.mutateAsync({
+        url: values.url,
         customTitle: values.customTitle || undefined,
         notes: values.notes || undefined,
         learningStatus: values.learningStatus,
-      },
-    });
-    onClose();
+      });
+      onClose();
+    } catch (err) {
+      applyServerErrors(err, setCreateError);
+    }
+  };
+
+  const onSubmitEdit = async (values: EditValues) => {
+    try {
+      await updateMutation.mutateAsync({
+        id: video!.id,
+        data: {
+          customTitle: values.customTitle || undefined,
+          notes: values.notes || undefined,
+          learningStatus: values.learningStatus,
+        },
+      });
+      onClose();
+    } catch (err) {
+      applyServerErrors(err, setEditError);
+    }
   };
 
   return (

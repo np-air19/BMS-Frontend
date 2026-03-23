@@ -18,6 +18,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useCreateReminder, useUpdateReminder } from '@/hooks/useReminders';
 import { useAuthStore } from '@/store/authStore';
+import { applyServerErrors } from '@/lib/formErrors';
 import type { Reminder } from '@/types';
 
 // ── Schema ─────────────────────────────────────────────────────────────────
@@ -62,6 +63,7 @@ export default function ReminderDialog({ open, onClose, reminder, bookmarkId }: 
     register,
     handleSubmit,
     reset,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
@@ -86,20 +88,23 @@ export default function ReminderDialog({ open, onClose, reminder, bookmarkId }: 
 
   const onSubmit = async (values: FormValues) => {
     const remindAt = new Date(`${values.date}T${values.time}`).toISOString();
-
-    if (isEdit) {
-      await updateMutation.mutateAsync({
-        id: reminder!.id,
-        data: { remindAt, message: values.message || undefined },
-      });
-    } else {
-      await createMutation.mutateAsync({
-        remindAt,
-        message: values.message || undefined,
-        bookmarkId: bookmarkId ?? undefined,
-      });
+    try {
+      if (isEdit) {
+        await updateMutation.mutateAsync({
+          id: reminder!.id,
+          data: { remindAt, message: values.message || undefined },
+        });
+      } else {
+        await createMutation.mutateAsync({
+          remindAt,
+          message: values.message || undefined,
+          bookmarkId: bookmarkId ?? undefined,
+        });
+      }
+      onClose();
+    } catch (err) {
+      applyServerErrors(err, setError);
     }
-    onClose();
   };
 
   return (

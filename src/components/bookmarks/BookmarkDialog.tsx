@@ -22,6 +22,7 @@ import { useCategories } from '@/hooks/useCategories';
 import { useCreateBookmark, useUpdateBookmark } from '@/hooks/useBookmarks';
 import { useCreateReminder } from '@/hooks/useReminders';
 import { useAuthStore } from '@/store/authStore';
+import { applyServerErrors } from '@/lib/formErrors';
 import { type CategoryTree } from '@/api/categories';
 import type { Bookmark } from '@/types';
 import { cn } from '@/lib/utils';
@@ -76,6 +77,7 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
     register,
     handleSubmit,
     reset,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
@@ -112,19 +114,23 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
       categoryIds: selectedIds,
     };
 
-    if (isEdit) {
-      await updateMutation.mutateAsync({ id: bookmark!.id, data: payload });
-    } else {
-      const res = await createMutation.mutateAsync(payload);
-      if (setReminder && reminderDate && reminderTime) {
-        await createReminderMutation.mutateAsync({
-          remindAt: new Date(`${reminderDate}T${reminderTime}`).toISOString(),
-          message: reminderMessage || undefined,
-          bookmarkId: res.data.data.id,
-        });
+    try {
+      if (isEdit) {
+        await updateMutation.mutateAsync({ id: bookmark!.id, data: payload });
+      } else {
+        const res = await createMutation.mutateAsync(payload);
+        if (setReminder && reminderDate && reminderTime) {
+          await createReminderMutation.mutateAsync({
+            remindAt: new Date(`${reminderDate}T${reminderTime}`).toISOString(),
+            message: reminderMessage || undefined,
+            bookmarkId: res.data.data.id,
+          });
+        }
       }
+      onClose();
+    } catch (err) {
+      applyServerErrors(err, setError);
     }
-    onClose();
   };
 
   return (

@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useCreateCategory, useUpdateCategory } from '@/hooks/useCategories';
+import { applyServerErrors } from '@/lib/formErrors';
 import type { CategoryTree } from '@/api/categories';
 import type { Category } from '@/types';
 
@@ -53,7 +54,7 @@ export default function CategoryDialog({ open, onClose, editing, roots }: Props)
   const update = useUpdateCategory();
   const isLoading = create.isPending || update.isPending;
 
-  const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<FormValues>({
+  const { register, handleSubmit, setValue, watch, reset, setError, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { name: '', color: '#3B82F6', parentId: undefined },
   });
@@ -81,16 +82,19 @@ export default function CategoryDialog({ open, onClose, editing, roots }: Props)
       color: values.color,
       parentId: values.parentId === 'none' ? undefined : values.parentId,
     };
-
-    if (editing) {
-      await update.mutateAsync({
-        id: editing.id,
-        data: { ...payload, parentId: payload.parentId ?? null },
-      });
-    } else {
-      await create.mutateAsync(payload);
+    try {
+      if (editing) {
+        await update.mutateAsync({
+          id: editing.id,
+          data: { ...payload, parentId: payload.parentId ?? null },
+        });
+      } else {
+        await create.mutateAsync(payload);
+      }
+      onClose();
+    } catch (err) {
+      applyServerErrors(err, setError);
     }
-    onClose();
   };
 
   // Flat list of root categories for parent selector (exclude self when editing)
