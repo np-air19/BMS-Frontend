@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import {
   Bookmark,
@@ -185,7 +186,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
     }
   };
 
-  if (!open) return null;
+  if (!open || typeof document === 'undefined') return null;
 
   const hasResults = results && results.total > 0;
   const hasQuery = debouncedQuery.trim().length >= 2;
@@ -198,11 +199,10 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
 
   let flatOffset = 0;
 
-  return (
+  return createPortal(
     <>
-      {/* Backdrop */}
       <div
-        className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden
       />
@@ -293,6 +293,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
           )}
         </div>
       </div>
-    </>
+    </>,
+    document.body,
   );
 }
