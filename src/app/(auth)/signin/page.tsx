@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
+import Image from 'next/image';
+import ninegravityLogo from '../../../../public/ninegravity-logo.png';
 import { ArrowLeft, Loader2, Bookmark, PlayCircle, FileText, Bell, CheckSquare } from 'lucide-react';
 import { BmsLogo } from '@/components/layout/BmsLogo';
 import { authApi } from '@/api/auth';
@@ -40,6 +42,29 @@ export default function SignInPage() {
   const { setUser } = useAuthStore();
   const [step, setStep] = useState<Step>('email');
   const [email, setEmail] = useState('');
+  const [isResending, setIsResending] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startCooldown = () => {
+    setResendCooldown(60);
+    if (cooldownRef.current) clearInterval(cooldownRef.current);
+    cooldownRef.current = setInterval(() => {
+      setResendCooldown((s) => {
+        if (s <= 1) {
+          clearInterval(cooldownRef.current!);
+          cooldownRef.current = null;
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+  };
+
+  useEffect(() => {
+    if (step === 'otp') startCooldown();
+    return () => { if (cooldownRef.current) clearInterval(cooldownRef.current); };
+  }, [step]);
 
   const emailForm = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),
@@ -75,11 +100,15 @@ export default function SignInPage() {
   };
 
   const handleResend = async () => {
+    setIsResending(true);
     try {
       await authApi.sendOtp(email);
       toast.success('New code sent');
+      startCooldown();
     } catch {
       toast.error('Failed to resend.');
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -115,7 +144,7 @@ export default function SignInPage() {
 
           <div className="space-y-3.5">
             {FEATURES.map(({ icon: Icon, label, desc }) => (
-              <div key={label} className="flex items-start gap-3">
+              <div key={label} className="flex items-center gap-3">
                 <div className="mt-0.5 flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-100 shrink-0">
                   <Icon className="w-3.5 h-3.5 text-indigo-600" />
                 </div>
@@ -135,7 +164,7 @@ export default function SignInPage() {
       </div>
 
       {/* ── Right panel — form ─────────────────────── */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 bg-white">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 bg-white relative">
         <div className="w-full max-w-[360px] space-y-7">
 
           {/* Mobile logo */}
@@ -246,13 +275,36 @@ export default function SignInPage() {
                 <button
                   type="button"
                   onClick={handleResend}
-                  className="text-slate-400 hover:text-slate-700 transition-colors"
+                  disabled={isResending || resendCooldown > 0}
+                  className="flex items-center gap-1.5 text-slate-400 hover:text-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-slate-400"
                 >
-                  Resend code
+                  {isResending
+                    ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Sending…</>
+                    : resendCooldown > 0
+                      ? `Resend in ${resendCooldown}s`
+                      : 'Resend code'
+                  }
                 </button>
               </div>
             </>
           )}
+        </div>
+
+        <div className="absolute bottom-6 flex items-center gap-2 text-xs text-slate-400">
+          <span>A product by</span>
+          <a
+            href="https://ninegravity.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center hover:opacity-80 transition-opacity"
+          >
+            <Image
+              src={ninegravityLogo}
+              alt="ninegravity"
+              height={18}
+              className="grayscale w-auto"
+            />
+          </a>
         </div>
       </div>
     </div>
