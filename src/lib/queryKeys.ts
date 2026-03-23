@@ -38,4 +38,8 @@ export const queryKeys = {
   search: {
     results: (query: string) => ['search', query] as const,
   },
+  settings: {
+    profile: () => ['settings', 'profile'] as const,
+    stats: () => ['settings', 'stats'] as const,
+  },
 } as const;

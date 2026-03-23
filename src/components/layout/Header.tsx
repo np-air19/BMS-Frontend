@@ -22,7 +22,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export default function Header() {
   const router = useRouter();
@@ -97,6 +97,9 @@ export default function Header() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full">
               <Avatar className="w-8 h-8">
+                {user?.avatar && (
+                  <AvatarImage src={user.avatar} alt={user.name} className="object-cover" />
+                )}
                 <AvatarFallback className="text-xs bg-primary text-primary-foreground">
                   {initials}
                 </AvatarFallback>
