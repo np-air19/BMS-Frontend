@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { BmsLogo } from '@/components/layout/BmsLogo';
 import { Search, PanelLeft, LogOut, User, Moon, Sun, Monitor } from 'lucide-react';
@@ -9,6 +10,7 @@ import { useUiStore } from '@/store/uiStore';
 import { useAuthStore } from '@/store/authStore';
 import { authApi } from '@/api/auth';
 import { Button } from '@/components/ui/button';
+import { SearchModal } from '@/components/search/SearchModal';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,6 +29,18 @@ export default function Header() {
   const { sidebarOpen, toggleSidebar } = useUiStore();
   const { user, logout } = useAuthStore();
   const { setTheme, theme } = useTheme();
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -65,8 +79,11 @@ export default function Header() {
         <span className="font-semibold text-sm tracking-tight">BMS</span>
       </div>
 
-      {/* Search bar */}
-      <button className="flex-1 flex items-center gap-2 h-9 rounded-md border bg-muted/50 px-3 text-sm text-muted-foreground hover:bg-muted transition-colors max-w-md">
+      {/* Search bar — opens modal */}
+      <button
+        onClick={() => setSearchOpen(true)}
+        className="flex-1 flex items-center gap-2 h-9 rounded-md border bg-muted/50 px-3 text-sm text-muted-foreground hover:bg-muted transition-colors max-w-md"
+      >
         <Search className="w-4 h-4 shrink-0" />
         <span className="flex-1 text-left">Search...</span>
         <kbd className="hidden sm:inline-flex items-center gap-1 rounded border bg-background px-1.5 py-0.5 text-[10px] font-medium">
@@ -141,6 +158,7 @@ export default function Header() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   );
 }
