@@ -44,7 +44,7 @@ export function BmsLogo({
           x="48"
           y="26"
           fontFamily="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-          fontSize="18"
+          fontSize="22"
           fontWeight="700"
           fill={textColor}
           letterSpacing="-0.4"
@@ -55,7 +55,7 @@ export function BmsLogo({
           x="49"
           y="36"
           fontFamily="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-          fontSize="7.5"
+          fontSize="9.5"
           fontWeight="500"
           fill={textColor}
           fillOpacity={subOpacity}
