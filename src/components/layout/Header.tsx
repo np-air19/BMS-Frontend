@@ -33,11 +33,6 @@ export default function Header() {
   const { mutate: saveTheme } = useUpdatePreferences();
   const [searchOpen, setSearchOpen] = useState(false);
 
-  const handleThemeChange = (t: 'light' | 'dark' | 'system') => {
-    setTheme(t);
-    saveTheme({ theme: t });
-  };
-
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -89,7 +84,7 @@ export default function Header() {
       {/* Search bar — opens modal */}
       <button
         onClick={() => setSearchOpen(true)}
-        className="flex-1 flex items-center gap-2 h-9 rounded-md border bg-muted/50 px-3 text-sm text-muted-foreground hover:bg-muted transition-colors max-w-md"
+        className="flex-1 flex items-center gap-2 h-9 rounded-md border px-3 text-sm text-muted-foreground hover:bg-muted transition-colors max-w-md"
       >
         <Search className="w-4 h-4 shrink-0" />
         <span className="flex-1 text-left">Search...</span>
@@ -141,15 +136,15 @@ export default function Header() {
                 Theme
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent>
-                <DropdownMenuItem onClick={() => handleThemeChange('light')}>
+                <DropdownMenuItem onClick={() => setTheme('light')}>
                   <Sun className="w-4 h-4 mr-2" />
                   Light
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleThemeChange('dark')}>
+                <DropdownMenuItem onClick={() => setTheme('dark')}>
                   <Moon className="w-4 h-4 mr-2" />
                   Dark
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleThemeChange('system')}>
+                <DropdownMenuItem onClick={() => setTheme('system')}>
                   <Monitor className="w-4 h-4 mr-2" />
                   System
                 </DropdownMenuItem>
