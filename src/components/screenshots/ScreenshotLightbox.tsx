@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { X } from 'lucide-react';
 import type { Screenshot } from '@/types';
+import { Button } from '../ui/button';
 
 interface Props {
   screenshot: Screenshot;
@@ -24,12 +25,12 @@ export default function ScreenshotLightbox({ screenshot, onClose }: Props) {
       onClick={onClose}
     >
       {/* Close button */}
-      <button
+      <Button
         onClick={onClose}
-        className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+        className="absolute top-4 right-4 px-3 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
       >
         <X className="w-5 h-5" />
-      </button>
+      </Button>
 
       {/* Image */}
       <div
