@@ -13,8 +13,6 @@ import {
   Bell,
   Tag,
   Settings,
-  PanelLeftClose,
-  PanelLeftOpen,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ROUTES } from '@/constants/routes';
@@ -117,28 +115,6 @@ export default function AppSidebar() {
             collapsed={collapsed}
           />
 
-          <button
-            onClick={toggleSidebar}
-            className={cn(
-              'flex items-center gap-3 rounded-md py-2 text-sm font-medium w-full transition-colors',
-              'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-              collapsed ? 'justify-center px-2' : 'px-3',
-            )}
-          >
-            {collapsed ? (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <PanelLeftOpen className="w-4 h-4" />
-                </TooltipTrigger>
-                <TooltipContent side="right">Expand sidebar</TooltipContent>
-              </Tooltip>
-            ) : (
-              <>
-                <PanelLeftClose className="w-4 h-4 shrink-0" />
-                <span>Collapse</span>
-              </>
-            )}
-          </button>
         </div>
       </aside>
     </TooltipProvider>
