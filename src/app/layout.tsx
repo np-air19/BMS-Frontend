@@ -17,11 +17,10 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "BMS — Bookmark Management",
   description: "Organize and manage your bookmarks, notes, videos, and more",
-  icons: [
-    { rel: 'icon', type: 'image/svg+xml', url: '/bms-icon.svg' },
-    { rel: 'shortcut icon', url: '/bms-icon.svg' },
-    { rel: 'apple-touch-icon', url: '/bms-icon.svg' },
-  ],
+  icons: {
+    icon: [{ url: '/bms-icon.svg', type: 'image/svg+xml' }],
+    shortcut: '/bms-icon.svg',
+  },
 };
 
 export default function RootLayout({

@@ -97,7 +97,7 @@ export default function SignInPage() {
 
         {/* Logo */}
         <div className="relative">
-          <BmsLogo variant="wordmark" className="text-slate-900" />
+          <BmsLogo variant="wordmark" colorScheme="dark" />
         </div>
 
         {/* Headline + features */}
