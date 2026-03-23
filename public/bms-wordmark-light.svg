@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 184 40" width="184" height="40">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#4338ca"/>
+    </linearGradient>
+  </defs>
+  <!-- Icon -->
+  <rect x="4" y="4" width="32" height="32" rx="7" fill="url(#g)"/>
+  <path d="M13 9H27V31L20 26L13 31V9Z" fill="white"/>
+  <rect x="16" y="15" width="8" height="1.5" rx="0.75" fill="#4338ca" fill-opacity="0.5"/>
+  <rect x="16" y="18.5" width="5.5" height="1.5" rx="0.75" fill="#4338ca" fill-opacity="0.5"/>
+  <!-- Wordmark — white text for dark backgrounds (sidebar) -->
+  <text x="48" y="26" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif" font-size="18" font-weight="700" fill="#ffffff" letter-spacing="-0.4">BMS</text>
+  <text x="49" y="35.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif" font-size="8" font-weight="500" fill="#ffffff" fill-opacity="0.5" letter-spacing="0.8">BOOKMARK MANAGEMENT</text>
+</svg>

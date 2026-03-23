@@ -1,9 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { BmsLogo } from '@/components/layout/BmsLogo';
 import { Search, PanelLeft, LogOut, User, Moon, Sun, Monitor } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useUiStore } from '@/store/uiStore';
 import { useAuthStore } from '@/store/authStore';
@@ -32,7 +32,6 @@ export default function Header() {
     try {
       await authApi.logout();
     } catch {
-      // ignore — cookie will be cleared server-side
     } finally {
       logout();
       router.push('/signin');
@@ -50,7 +49,6 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-30 h-16 flex items-center gap-3 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
-      {/* Sidebar toggle — desktop */}
       <Button
         variant="ghost"
         size="icon"
@@ -63,10 +61,8 @@ export default function Header() {
 
       {/* Logo — mobile only */}
       <div className="flex md:hidden items-center gap-2">
-        <div className="flex items-center justify-center w-7 h-7 rounded-md bg-primary text-primary-foreground font-bold text-xs">
-          B
-        </div>
-        <span className="font-semibold text-sm">BMS</span>
+        <BmsLogo variant="icon" size={28} />
+        <span className="font-semibold text-sm tracking-tight">BMS</span>
       </div>
 
       {/* Search bar */}

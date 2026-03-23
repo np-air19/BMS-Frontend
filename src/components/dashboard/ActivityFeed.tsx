@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Bookmark, FileText, PlaySquare } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';

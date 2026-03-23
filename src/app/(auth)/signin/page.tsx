@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { ArrowLeft, Loader2, Bookmark, PlayCircle, FileText, Bell, CheckSquare } from 'lucide-react';
+import { BmsLogo } from '@/components/layout/BmsLogo';
 import { authApi } from '@/api/auth';
 import { useAuthStore } from '@/store/authStore';
 
@@ -95,11 +96,8 @@ export default function SignInPage() {
         <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-slate-50 to-transparent" />
 
         {/* Logo */}
-        <div className="relative flex items-center gap-2.5">
-          <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-600 text-white font-bold text-base shadow-sm">
-            B
-          </div>
-          <span className="font-semibold text-slate-900 text-base tracking-tight">BMS</span>
+        <div className="relative">
+          <BmsLogo variant="wordmark" className="text-slate-900" />
         </div>
 
         {/* Headline + features */}
@@ -141,11 +139,8 @@ export default function SignInPage() {
         <div className="w-full max-w-[360px] space-y-7">
 
           {/* Mobile logo */}
-          <div className="flex lg:hidden items-center gap-2 mb-4">
-            <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-indigo-600 text-white font-bold text-sm">
-              B
-            </div>
-            <span className="font-semibold text-slate-900 tracking-tight">BMS</span>
+          <div className="flex lg:hidden mb-4">
+            <BmsLogo variant="wordmark" colorScheme="dark" />
           </div>
 
           {/* ── Email step ── */}

@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Bookmark, PlaySquare, FileText, CheckSquare } from 'lucide-react';
 

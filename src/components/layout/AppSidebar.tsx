@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { BmsLogo } from '@/components/layout/BmsLogo';
 import {
   LayoutDashboard,
   Bookmark,
@@ -89,15 +90,14 @@ export default function AppSidebar() {
         {/* Logo */}
         <div
           className={cn(
-            'flex items-center h-16 border-b border-sidebar-border px-4 shrink-0',
-            collapsed ? 'justify-center' : 'gap-3',
+            'flex items-center h-16 border-b border-sidebar-border shrink-0',
+            collapsed ? 'justify-center px-2' : 'px-4',
           )}
         >
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-primary-foreground font-bold text-sm shrink-0">
-            B
-          </div>
-          {!collapsed && (
-            <span className="font-semibold text-sidebar-foreground tracking-tight">BMS</span>
+          {collapsed ? (
+            <BmsLogo variant="icon" size={32} />
+          ) : (
+            <BmsLogo variant="wordmark" colorScheme="light" />
           )}
         </div>
 
