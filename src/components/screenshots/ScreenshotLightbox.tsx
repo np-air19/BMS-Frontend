@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Image from 'next/image';
 import { X } from 'lucide-react';
 import type { Screenshot } from '@/types';
 import { Button } from '../ui/button';
@@ -37,10 +38,13 @@ export default function ScreenshotLightbox({ screenshot, onClose }: Props) {
         className="relative max-w-[90vw] max-h-[90vh] flex flex-col gap-3"
         onClick={(e) => e.stopPropagation()}
       >
-        <img
+        <Image
           src={screenshot.imageUrl}
           alt={screenshot.title}
-          className="max-w-full max-h-[80vh] rounded-lg object-contain shadow-2xl"
+          width={1200}
+          height={800}
+          unoptimized
+          className="max-w-full max-h-[80vh] rounded-lg object-contain shadow-2xl w-auto h-auto"
         />
         <div className="text-center">
           <p className="text-white font-medium text-sm">{screenshot.title}</p>

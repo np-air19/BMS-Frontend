@@ -96,7 +96,7 @@ export default function BookmarkDialog({ open, onClose, bookmark }: Props) {
       setReminderTime(defaultReminderTime);
       setReminderMessage('');
     }
-  }, [open, bookmark, reset]);
+  }, [open, bookmark, reset, defaultReminderTime]);
 
   const toggle = (id: string) =>
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));

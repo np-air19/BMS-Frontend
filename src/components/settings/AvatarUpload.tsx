@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import Image from 'next/image';
 import { Camera, Trash2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -56,10 +57,12 @@ export function AvatarUpload({ currentAvatar, initials }: AvatarUploadProps) {
           )}
         >
           {displaySrc ? (
-            <img
+            <Image
               src={displaySrc}
               alt="Avatar"
-              className="w-full h-full object-cover"
+              fill
+              unoptimized
+              className="object-cover"
             />
           ) : (
             <span>{initials}</span>

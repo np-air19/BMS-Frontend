@@ -72,6 +72,7 @@ export default function BookmarkCard({ bookmark, onEdit }: Props) {
         <div className="flex items-start gap-3">
           <div className="mt-0.5 w-8 h-8 rounded-lg border bg-muted flex items-center justify-center shrink-0 overflow-hidden">
             {bookmark.favicon && !faviconError ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={bookmark.favicon}
                 alt=""

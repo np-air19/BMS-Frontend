@@ -252,7 +252,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
 
             {hasQuery && !isLoading && !hasResults && (
               <p className="py-8 text-center text-sm text-muted-foreground">
-                No results for <span className="font-medium text-foreground">"{debouncedQuery}"</span>
+                No results for <span className="font-medium text-foreground">&ldquo;{debouncedQuery}&rdquo;</span>
               </p>
             )}
 

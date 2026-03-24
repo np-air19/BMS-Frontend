@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { ExternalLink, Pencil, Trash2, MoreHorizontal, PlayCircle, ChevronDown } from 'lucide-react';
 import {
   DropdownMenu,
@@ -78,10 +79,11 @@ export default function VideoCard({ video, onEdit }: Props) {
         {/* Thumbnail */}
         <div className="relative aspect-video bg-muted overflow-hidden">
           {video.thumbnailUrl && !imgError ? (
-            <img
+            <Image
               src={video.thumbnailUrl}
               alt={displayTitle}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
               onError={() => setImgError(true)}
             />
           ) : (

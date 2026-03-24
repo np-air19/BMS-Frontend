@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Plus, Search, Image, Loader2 } from 'lucide-react';
+import { Plus, Search, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useScreenshots } from '@/hooks/useScreenshots';
@@ -73,7 +73,7 @@ export default function ScreenshotsPage() {
       ) : screenshots.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center gap-3">
           <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
-            <Image className="w-6 h-6 text-muted-foreground" />
+            <ImageIcon className="w-6 h-6 text-muted-foreground" />
           </div>
           <p className="text-sm font-medium">
             {debouncedSearch ? 'No screenshots match your search' : 'No screenshots yet'}

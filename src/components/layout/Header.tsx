@@ -8,8 +8,7 @@ import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { useUiStore } from '@/store/uiStore';
 import { useAuthStore } from '@/store/authStore';
-import { authApi } from '@/api/auth';
-import { useUpdatePreferences } from '@/hooks/useSettings';
+import { logoutUser } from '@/lib/logout';
 import { Button } from '@/components/ui/button';
 import { SearchModal } from '@/components/search/SearchModal';
 import {
@@ -28,9 +27,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 export default function Header() {
   const router = useRouter();
   const { sidebarOpen, toggleSidebar } = useUiStore();
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
   const { setTheme, theme } = useTheme();
-  const { mutate: saveTheme } = useUpdatePreferences();
   const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
@@ -44,15 +42,7 @@ export default function Header() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      await authApi.logout();
-    } catch {
-    } finally {
-      logout();
-      router.push('/signin');
-    }
-  };
+  const handleLogout = () => logoutUser();
 
   const initials = user?.name
     ? user.name

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import Image from 'next/image';
 import { useDropzone } from 'react-dropzone';
 import { Upload, X, ImageIcon, Loader2 } from 'lucide-react';
 import {
@@ -104,7 +105,7 @@ export default function ScreenshotUploadDialog({ open, onClose }: Props) {
             </div>
           ) : (
             <div className="relative rounded-xl overflow-hidden border bg-muted aspect-video">
-              <img src={preview!} alt="Preview" className="w-full h-full object-contain" />
+              <Image src={preview!} alt="Preview" fill unoptimized className="object-contain" />
               <button
                 type="button"
                 onClick={() => { setFile(null); if (preview) URL.revokeObjectURL(preview); setPreview(null); }}

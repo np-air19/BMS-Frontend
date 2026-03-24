@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { Expand, Trash2 } from 'lucide-react';
 import {
   AlertDialog,
@@ -28,10 +29,11 @@ export default function ScreenshotCard({ screenshot }: Props) {
   return (
     <>
       <div className="group relative aspect-square rounded-xl overflow-hidden border bg-muted cursor-pointer">
-        <img
+        <Image
           src={screenshot.imageUrl}
           alt={screenshot.title}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
 
         {/* Hover overlay */}

@@ -73,7 +73,7 @@ function NavLink({
 }
 
 export default function AppSidebar() {
-  const { sidebarOpen, toggleSidebar } = useUiStore();
+  const { sidebarOpen } = useUiStore();
   const collapsed = !sidebarOpen;
 
   return (

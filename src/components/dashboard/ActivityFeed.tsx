@@ -24,7 +24,7 @@ const TYPE_CONFIG = {
     color: 'text-indigo-600',
     bg: 'bg-indigo-50 dark:bg-indigo-950',
     label: 'Bookmark',
-    href: (_id: string) => `/bookmarks`,
+    href: () => `/bookmarks`,
   },
   note: {
     icon: FileText,
@@ -38,7 +38,7 @@ const TYPE_CONFIG = {
     color: 'text-rose-600',
     bg: 'bg-rose-50 dark:bg-rose-950',
     label: 'Video',
-    href: (_id: string) => `/videos`,
+    href: () => `/videos`,
   },
 } as const;
 
