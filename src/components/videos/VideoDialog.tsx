@@ -102,7 +102,7 @@ export default function VideoDialog({ open, onClose, video }: Props) {
       });
       onClose();
     } catch (err) {
-      applyServerErrors(err, setCreateError);
+      applyServerErrors(err, setCreateError, 'url');
     }
   };
 
