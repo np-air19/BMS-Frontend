@@ -5,10 +5,6 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('bms_token')?.value;
   const isAuthPage = request.nextUrl.pathname.startsWith('/signin');
 
-  if (!token && !isAuthPage) {
-    return NextResponse.redirect(new URL('/signin', request.url));
-  }
-
   if (token && isAuthPage) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
